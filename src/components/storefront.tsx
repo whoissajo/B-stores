@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import {
-  ArrowRight, ArrowUpRight, Check, ChevronDown, Heart, Menu, Minus, Plus,
+  ArrowRight, ArrowUpRight, ChevronDown, Heart, Menu, Minus, Plus,
   Search, ShieldCheck, ShoppingBag, Sparkles, X
 } from "lucide-react";
 import { books, formatPrice, type Book } from "@/lib/books";
@@ -22,8 +22,6 @@ export function Storefront() {
   const [customerEmail, setCustomerEmail] = useState("");
   const [checkoutError, setCheckoutError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterDone, setNewsletterDone] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -243,17 +241,11 @@ export function Storefront() {
           <h2>Good things come<br /><em>to those who read.</em></h2>
           <p>Fresh finds, thoughtful recommendations, and little notes from our reading corner.</p>
         </div>
-        <form className="newsletter-form" onSubmit={(event) => { event.preventDefault(); if (newsletterEmail.includes("@")) setNewsletterDone(true); }}>
-          {newsletterDone ? (
-            <div className="newsletter-success"><Check size={18} /> You&apos;re on the list. Happy reading!</div>
-          ) : (
-            <>
-              <label htmlFor="newsletter-email">YOUR EMAIL ADDRESS</label>
-              <div className="newsletter-input-row"><input id="newsletter-email" type="email" required value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} placeholder="you@example.com" /><button type="submit" aria-label="Subscribe"><ArrowRight size={19} /></button></div>
-              <small>No noise. Just good books and better ideas.</small>
-            </>
-          )}
-        </form>
+        <div className="newsletter-form newsletter-coming-soon">
+          <span>THE READING LETTER</span>
+          <p>Our first reading letter is in the works. Until then, discover something good.</p>
+          <a href="#discover">Browse the collection <ArrowRight size={16} /></a>
+        </div>
       </section>
 
       <footer className="site-footer">
