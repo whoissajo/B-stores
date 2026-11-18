@@ -36,7 +36,7 @@ PakPays can keep an order in `pending` while a bank credit is awaiting review. O
 
 ## Store content
 
-Edit `src/lib/books.ts` to change the starter book catalogue, descriptions, categories and PKR prices. The catalogue is also used by the server checkout route, so the browser cannot change product prices by editing its request.
+Edit `src/lib/books.ts` to change the starter book catalogue, descriptions, categories and PKR prices. Prices are stored as integer paisa (for example, `200` means PKR 2.00) and formatted consistently in the storefront, basket, and server-side checkout. The current test prices range from PKR 2.00 to PKR 20.00. The catalogue is also used by the server checkout route, so the browser cannot change product prices by editing its request.
 
 ## Before taking physical-book orders
 
