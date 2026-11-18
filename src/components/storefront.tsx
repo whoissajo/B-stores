@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight, ArrowUpRight, Check, ChevronDown, Heart, Menu, Minus, Plus,
   Search, ShieldCheck, ShoppingBag, Sparkles, X
@@ -24,6 +24,22 @@ export function Storefront() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterDone, setNewsletterDone] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+      if (event.key === "Escape") {
+        setCartOpen(false);
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const visibleBooks = useMemo(() => books.filter((book) => {
     const matchesCategory = activeCategory === "All books" || book.category === activeCategory;
@@ -110,7 +126,7 @@ export function Storefront() {
         <div className="header-actions">
           <label className="header-search">
             <Search size={16} />
-            <input value={query} onChange={(event) => { setQuery(event.target.value); document.getElementById("discover")?.scrollIntoView({ behavior: "smooth" }); }} placeholder="Find a book..." aria-label="Search books" />
+            <input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a book..." aria-label="Search books" />
             <kbd>⌘ K</kbd>
           </label>
           <button type="button" className="icon-button cart-trigger" onClick={() => setCartOpen(true)} aria-label={"Open basket, " + itemCount + " items"}>

@@ -32,6 +32,7 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
     let count = 0;
+    let latestStatus = "";
 
     const check = async () => {
       try {
@@ -42,6 +43,7 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
           setError(result.error || "We couldn't verify the order yet.");
         } else {
           setData(result);
+          latestStatus = result.status || "";
           setError("");
         }
       } catch {
@@ -51,8 +53,7 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
         if (!cancelled) {
           setLoading(false);
           setAttempts(count);
-          const current = data?.status;
-          if (count < 36 && current !== "approved" && current !== "merchant_approved" && current !== "timeout" && current !== "cancelled") {
+          if (count < 36 && latestStatus !== "approved" && latestStatus !== "merchant_approved" && latestStatus !== "timeout" && latestStatus !== "cancelled") {
             timer = setTimeout(check, 5000);
           }
         }

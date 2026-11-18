@@ -20,6 +20,18 @@ export async function POST(request: Request) {
     );
   }
 
+  const requestOrigin = request.headers.get("origin");
+  if (requestOrigin) {
+    try {
+      const expectedOrigin = new URL(process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin).origin;
+      if (new URL(requestOrigin).origin !== expectedOrigin) {
+        return NextResponse.json({ ok: false, error: "Cross-origin checkout requests are not allowed." }, { status: 403 });
+      }
+    } catch {
+      return NextResponse.json({ ok: false, error: "The bookstore origin is not configured correctly." }, { status: 503 });
+    }
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json() as Record<string, unknown>;
