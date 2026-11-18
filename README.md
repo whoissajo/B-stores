@@ -42,6 +42,18 @@ Edit `src/lib/books.ts` to change the starter book catalogue, descriptions, cate
 
 This starter implements the storefront and payment hand-off, not a full fulfilment platform. It sends customer name, email and the order's book summary to PakPays; it does not yet persist postal addresses, inventory, shipping charges, dispatch status or returns. Add a private order/fulfilment database and your delivery workflow before accepting orders that require shipping. Do not put postal addresses or other sensitive customer details into the public checkout description.
 
+## PakPays webhook
+
+B-stores exposes `POST /api/webhooks/pakpays` as the PakPays merchant webhook destination. Configure the destination in PakPays Dashboard → Webhooks as:
+
+```text
+https://YOUR-BSTORES-DOMAIN/api/webhooks/pakpays
+```
+
+Copy the signing secret shown by PakPays into the B-stores Vercel environment as `PAKPAYS_WEBHOOK_SECRET`. Keep it server-only, do not commit it, and redeploy after setting it. The receiver verifies the HMAC-SHA256 signature against the exact raw body, accepts the `payment.approved` event, then checks the referenced order again through the authenticated PakPays status API. Only a verified `approved` or `merchant_approved` payment for a B-stores `BKS-` order reference receives a success response. Failed verification returns a non-2xx response so PakPays can retry.
+
+Webhook delivery is at-least-once. The receiver is intentionally idempotent and does not treat the webhook payload or the browser return URL as settlement proof. The current bookstore still obtains the visible order status from its existing server-side status check; this starter does not yet have a persistent bookstore orders database or fulfilment workflow, so the webhook receiver does not create a durable order record or dispatch books. Add that database/workflow before using webhook events to trigger fulfilment.
+
 ## Quality checks
 
 ```bash
