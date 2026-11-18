@@ -223,7 +223,7 @@ export function Storefront() {
         <div className="editorial-copy">
           <p className="eyebrow">A NOTE FROM OUR BOOKSHELF</p>
           <h2>Less scrolling.<br /><em>More soul-stirring.</em></h2>
-          <p>We believe the right book finds you at exactly the right time. That's why our shelves are built around ideas worth sitting with, stories worth sharing, and pages you'll want to return to.</p>
+          <p>We believe the right book finds you at exactly the right time. That&apos;s why our shelves are built around ideas worth sitting with, stories worth sharing, and pages you&apos;ll want to return to.</p>
           <a className="editorial-link" href="#discover">Meet your next favourite <ArrowUpRight size={17} /></a>
           <div className="editorial-signoff">KEEP TURNING PAGES. <span>— B.</span></div>
         </div>
@@ -245,7 +245,7 @@ export function Storefront() {
         </div>
         <form className="newsletter-form" onSubmit={(event) => { event.preventDefault(); if (newsletterEmail.includes("@")) setNewsletterDone(true); }}>
           {newsletterDone ? (
-            <div className="newsletter-success"><Check size={18} /> You're on the list. Happy reading!</div>
+            <div className="newsletter-success"><Check size={18} /> You&apos;re on the list. Happy reading!</div>
           ) : (
             <>
               <label htmlFor="newsletter-email">YOUR EMAIL ADDRESS</label>
@@ -303,7 +303,7 @@ export function Storefront() {
                 <label htmlFor="customer-email">EMAIL ADDRESS</label>
                 <input id="customer-email" required type="email" maxLength={254} autoComplete="email" value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)} placeholder="you@example.com" />
                 <div className="checkout-total"><span>Order total</span><strong>{formatPrice(subtotal)}</strong></div>
-                <div className="payment-note"><ShieldCheck size={17} /><span>You'll continue to PakPays' secure hosted checkout to complete your payment in PKR.</span></div>
+                <div className="payment-note"><ShieldCheck size={17} /><span>You&apos;ll continue to PakPays&apos; secure hosted checkout to complete your payment in PKR.</span></div>
                 {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
                 <button className="button button-primary button-full" type="submit" disabled={submitting || cartLines.length === 0}>{submitting ? "Connecting to PakPays…" : "Continue to secure payment"} <ArrowRight size={17} /></button>
                 <p className="checkout-fineprint">Your payment is verified by the bookstore server with PakPays. A return to this site alone is never treated as proof of payment.</p>

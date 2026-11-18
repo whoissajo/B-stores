@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, BookOpen, CheckCircle2, Clock3, RefreshCw, ShieldCheck } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock3, RefreshCw, ShieldCheck } from "lucide-react";
 import { formatPrice } from "@/lib/books";
 
 type StatusData = {
@@ -24,11 +24,7 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
   const [attempts, setAttempts] = useState(0);
 
   useEffect(() => {
-    if (!orderId) {
-      setLoading(false);
-      setError("We couldn't find an order reference in the return link. Your payment may still be processing.");
-      return;
-    }
+    if (!orderId) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
     let count = 0;
@@ -67,10 +63,12 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
     };
   }, [orderId]);
 
-  const status = data?.status || "checking";
+  const missingOrder = !orderId;
+  const status = missingOrder ? "missing" : data?.status || "checking";
   const paid = status === "approved" || status === "merchant_approved";
   const expired = status === "timeout";
   const cancelledPayment = status === "cancelled";
+  const displayError = missingOrder ? "We couldn't find an order reference in the return link. Your payment may still be processing." : error;
 
   return (
     <main className="status-page">
@@ -79,15 +77,17 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
         <span className="secure-note"><ShieldCheck size={15} /> Secure payment status</span>
       </div>
       <section className="status-card">
-        <div className={"status-icon " + (paid ? "status-icon-success" : expired || cancelledPayment ? "status-icon-muted" : "status-icon-pending")}>
+        <div className={"status-icon " + (paid ? "status-icon-success" : expired || cancelledPayment || missingOrder ? "status-icon-muted" : "status-icon-pending")}>
           {paid ? <CheckCircle2 size={32} /> : <Clock3 size={32} />}
         </div>
         <p className="eyebrow">{paid ? "Order confirmed" : "Payment update"}</p>
-        <h1>{paid ? "Your next chapter starts here." : expired ? "The payment window has ended." : cancelledPayment ? "This payment was cancelled." : "Your order is on its way to confirmation."}</h1>
+        <h1>{paid ? "Your next chapter starts here." : missingOrder ? "We couldn't find your order reference." : expired ? "The payment window has ended." : cancelledPayment ? "This payment was cancelled." : "Your order is on its way to confirmation."}</h1>
         <p className="status-copy">
           {paid
             ? "PakPays has confirmed this payment. Thank you for choosing B-stores."
-            : expired
+            : missingOrder
+              ? "The return link did not include an order ID. Check your PakPays checkout page or return to the bookstore."
+              : expired
               ? "A timed-out request does not prove that no transfer was made. A late bank credit may still need merchant review."
               : cancelledPayment
                 ? "No successful payment is recorded for this order. You can return to the shop and try again."
@@ -103,11 +103,11 @@ export function OrderStatus({ orderId, clientOrderId }: { orderId: string; clien
           </div>
         )}
 
-        {error && <p className="status-error" role="alert">{error}</p>}
-        {!paid && !expired && !cancelledPayment && <p className="polling-note"><RefreshCw size={14} className={loading ? "spin" : ""} /> {loading ? "Checking with PakPays…" : attempts >= 36 ? "Still waiting. Refresh to check again." : "Automatic status checks are active."}</p>}
+        {displayError && <p className="status-error" role="alert">{displayError}</p>}
+        {!paid && !expired && !cancelledPayment && !missingOrder && <p className="polling-note"><RefreshCw size={14} className={loading ? "spin" : ""} /> {loading ? "Checking with PakPays…" : attempts >= 36 ? "Still waiting. Refresh to check again." : "Automatic status checks are active."}</p>}
         <div className="status-actions">
           <Link href="/" className="button button-primary"><BookOpen size={16} /> Back to the bookstore</Link>
-          {!paid && <button type="button" className="button button-quiet" onClick={() => window.location.reload()}><RefreshCw size={15} /> Refresh status</button>}
+          {!paid && !missingOrder && <button type="button" className="button button-quiet" onClick={() => window.location.reload()}><RefreshCw size={15} /> Refresh status</button>}
         </div>
         <p className="status-footnote">A browser return link is not proof of payment. This page only confirms an order after a server-to-server status check with PakPays.</p>
       </section>
