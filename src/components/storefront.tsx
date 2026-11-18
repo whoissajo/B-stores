@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
 import {
   ArrowRight, ArrowUpRight, Check, ChevronDown, Heart, Menu, Minus, Plus,
   Search, ShieldCheck, ShoppingBag, Sparkles, X
@@ -73,7 +74,7 @@ export function Storefront() {
     setCheckoutMode(true);
   };
 
-  const submitCheckout = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submitCheckout = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitting(true);
     setCheckoutError("");
@@ -315,6 +316,6 @@ export function Storefront() {
   );
 }
 
-function Link({ hrefTop, children, className }: { hrefTop: string; children: React.ReactNode; className?: string }) {
+function Link({ hrefTop, children, className }: { hrefTop: string; children: ReactNode; className?: string }) {
   return <a href={hrefTop} className={className}>{children}</a>;
 }
