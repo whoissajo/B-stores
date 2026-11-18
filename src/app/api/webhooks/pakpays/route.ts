@@ -36,7 +36,7 @@ function validSignature(rawBody: string, signature: string, secret: string): boo
 export async function POST(request: Request) {
   const secret = process.env.PAKPAYS_WEBHOOK_SECRET?.trim();
   const apiKey = process.env.PAKPAYS_API_KEY?.trim();
-  const apiBase = (process.env.PAKPAYS_API_BASE_URL || "https://pakpays.vercel.app").replace(/\\/+$/, "");
+  const apiBase = (process.env.PAKPAYS_API_BASE_URL || "https://pakpays.vercel.app").replace(/\/+$/, "");
 
   if (!secret || !apiKey) {
     return NextResponse.json({ ok: false, error: "Webhook verification is not configured." }, { status: 503 });
